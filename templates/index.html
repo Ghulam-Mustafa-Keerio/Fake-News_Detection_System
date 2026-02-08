@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+        
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+        
+        .result-section {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .result-section.show {
+            display: block;
+        }
+        
+        .result-fake {
+            background: #ffe5e5;
+            border: 2px solid #e74c3c;
+        }
+        
+        .result-real {
+            background: #e5ffe5;
+            border: 2px solid #27ae60;
+        }
+        
+        .result-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .result-fake .result-title {
+            color: #c0392b;
+        }
+        
+        .result-real .result-title {
+            color: #27ae60;
+        }
+        
+        .confidence {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            background: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .nav-links {
+            margin-top: 15px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Fake News Detection</h1>
+            <p>Advanced NLP-powered news verification system</p>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <label for="newsText">Enter news text to analyze:</label>
+                <textarea id="newsText" placeholder="Paste your news article or headline here..."></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-secondary" onclick="loadFakeSample()">Load Fake Sample</button>
+                <button class="btn-secondary" onclick="loadRealSample()">Load Real Sample</button>
+                <button class="btn-secondary" onclick="clearText()">Clear</button>
+            </div>
+            
+            <button class="btn-primary" onclick="analyzeNews()">🔍 Analyze News</button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px;">Analyzing...</p>
+            </div>
+            
+            <div class="result-section" id="result">
+                <div class="result-title" id="resultTitle"></div>
+                <div class="confidence" id="confidence"></div>
+                <p style="margin-top: 15px;" id="resultText"></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Powered by Machine Learning & Natural Language Processing</p>
+            <p style="margin-top: 5px; font-size: 0.9em;">© 2024 Fake News Detection System</p>
+        </div>
+    </div>
+    
+    <script>
+        function loadFakeSample() {
+            document.getElementById('newsText').value = 
+                "Breaking News: Scientists have discovered that aliens are living among us and " +
+                "controlling the world government. Anonymous sources confirm that the moon landing " +
+                "was faked and the earth is actually flat. This shocking revelation will change " +
+                "everything we know!";
+        }
+        
+        function loadRealSample() {
+            document.getElementById('newsText').value = 
+                "Local community celebrates the opening of a new public library. The facility, " +
+                "which cost $2 million to build, will serve residents with access to books, " +
+                "computers, and educational programs. City officials and community members " +
+                "attended the ribbon-cutting ceremony yesterday afternoon.";
+        }
+        
+        function clearText() {
+            document.getElementById('newsText').value = '';
+            document.getElementById('result').classList.remove('show');
+        }
+        
+        async function analyzeNews() {
+            const text = document.getElementById('newsText').value.trim();
+            
+            if (!text) {
+                alert('Please enter some text to analyze.');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('result').classList.remove('show');
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayResult(data);
+                } else {
+                    alert('Error: ' + (data.error || 'An error occurred'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+        
+        function displayResult(data) {
+            const resultDiv = document.getElementById('result');
+            const resultTitle = document.getElementById('resultTitle');
+            const confidence = document.getElementById('confidence');
+            const resultText = document.getElementById('resultText');
+            
+            // Remove previous classes
+            resultDiv.classList.remove('result-fake', 'result-real');
+            
+            // Add appropriate class and content
+            if (data.prediction === 'FAKE') {
+                resultDiv.classList.add('result-fake');
+                resultTitle.textContent = '⚠️ FAKE NEWS DETECTED!';
+                resultText.textContent = 'This text shows characteristics of fake news. Please verify from reliable sources.';
+            } else {
+                resultDiv.classList.add('result-real');
+                resultTitle.textContent = '✓ REAL NEWS';
+                resultText.textContent = 'This text appears to be legitimate news. However, always verify important information.';
+            }
+            
+            confidence.textContent = `Confidence: ${data.confidence}%`;
+            resultDiv.classList.add('show');
+        }
+    </script>
+</body>
+</html>
