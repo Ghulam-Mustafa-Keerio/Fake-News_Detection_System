@@ -1,168 +1,239 @@
 # 🔍 Fake News Detection System
 
-An advanced machine learning application that uses Natural Language Processing (NLP) techniques to detect fake news articles. The system provides both a web interface and a desktop GUI for easy testing and deployment.
+An AI-powered machine learning system for detecting fake news using Natural Language Processing (NLP) and Explainable AI. Built with Python, Flask, and scikit-learn.
 
-## ✨ Features
+---
 
-- **Advanced NLP Analysis**: Uses TF-IDF vectorization and SGD Classifier (Linear SVM)
-- **Web Application**: Flask-based web interface accessible from any device
-- **Desktop GUI**: Tkinter-based graphical interface for standalone use
-- **Real-time Predictions**: Instant analysis with confidence scores
-- **Sample Data**: Pre-loaded examples for testing
-- **Text Preprocessing**: Comprehensive cleaning including stopword removal and stemming
+## ✨ Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **Ensemble ML Model** | Combines multiple classifiers for robust predictions |
+| **Explainable AI** | Shows *why* the model made its prediction |
+| **Linguistic Analysis** | Detects sensational language, clickbait, and credibility indicators |
+| **Risk Detection** | Identifies red flags common in fake news |
+| **Web Interface** | Modern, responsive Flask-based application |
+| **Desktop GUI** | Tkinter-based standalone application |
+
+---
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- Python 3.7 or higher
-- pip (Python package installer)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/Ghulam-Mustafa-Keerio/Fake-News_Detection_System.git
-cd Fake-News_Detection_System
-```
-
-2. Install required packages:
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Train the model:
+### 2. Train the Model
 ```bash
 python train_model.py
 ```
 
-This will create `model.pkl` and `vectorizer.pkl` files needed for predictions.
-
-## 💻 Usage
-
-### Web Application
-
-1. Start the Flask server:
+### 3. Run the Web Application
 ```bash
 python app.py
 ```
 
-2. Open your browser and navigate to:
+### 4. Open in Browser
 ```
 http://localhost:5000
 ```
 
-3. Enter news text and click "Analyze News" to get predictions.
-
-### Desktop GUI (Tkinter)
-
-Run the Tkinter interface:
-```bash
-python gui.py
-```
-
-The GUI provides:
-- Text input area for news articles
-- Sample data buttons for testing
-- Real-time analysis with visual feedback
-- Confidence scores for predictions
-
-## 🧠 How It Works
-
-### 1. Text Preprocessing
-- Converts text to lowercase
-- Removes URLs, mentions, and special characters
-- Eliminates stopwords
-- Applies stemming for normalization
-
-### 2. Feature Extraction
-- Uses TF-IDF (Term Frequency-Inverse Document Frequency)
-- Captures word importance in context
-- Generates numerical features from text
-
-### 3. Classification
-- SGD Classifier with hinge loss (Linear SVM) for accurate predictions
-- Trained on labeled fake/real news dataset
-- Provides binary classification with confidence scores
-
-### 4. Model Performance
-The model uses:
-- **TF-IDF Vectorizer**: max_features=5000, ngram_range=(1,2)
-- **SGD Classifier**: Linear SVM with hinge loss, max_iter=50
-- **Train/Test Split**: 80/20 ratio
+---
 
 ## 📁 Project Structure
 
 ```
 Fake-News_Detection_System/
-├── train_model.py          # Model training script
-├── app.py                  # Flask web application
-├── gui.py                  # Tkinter desktop GUI
-├── requirements.txt        # Python dependencies
-├── .gitignore             # Git ignore rules
-├── templates/             # HTML templates
-│   ├── index.html        # Main web interface
-│   └── about.html        # About page
-├── model.pkl             # Trained model (generated)
-└── vectorizer.pkl        # TF-IDF vectorizer (generated)
+│
+├── train_model.py      # Model training with NLP preprocessing
+├── app.py              # Flask web application
+├── gui.py              # Desktop GUI application
+├── dataset_utils.py    # Dataset loading utilities
+│
+├── model.json          # Trained ML model (SECURE JSON format)
+├── vectorizer.json     # TF-IDF vectorizer (SECURE JSON format)
+│
+├── templates/
+│   ├── index.html      # Main web interface
+│   └── about.html      # About page
+│
+└── requirements.txt    # Python dependencies
 ```
-
-## 🛠️ Technologies Used
-
-- **Python**: Core programming language
-- **Flask**: Web framework for REST API
-- **Scikit-learn**: Machine learning library
-- **NLTK**: Natural language processing toolkit
-- **Pandas & NumPy**: Data manipulation
-- **Tkinter**: Desktop GUI framework
-- **Joblib**: Model serialization
-
-## 📊 Sample Usage
-
-### Python API Example
-
-```python
-from train_model import FakeNewsDetector
-
-# Initialize detector
-detector = FakeNewsDetector()
-detector.load_model()
-
-# Make prediction
-text = "Your news article text here..."
-prediction, confidence = detector.predict(text)
-
-if prediction == 1:
-    print(f"REAL NEWS (Confidence: {confidence:.2f}%)")
-else:
-    print(f"FAKE NEWS (Confidence: {confidence:.2f}%)")
-```
-
-## ⚠️ Important Notes
-
-- This system is an assistive tool, not a definitive fact-checker
-- Always verify important news from multiple reliable sources
-- Model accuracy depends on training data quality and diversity
-- The system works best with English language news articles
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues and pull requests.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Built with open-source machine learning libraries
-- Inspired by the need to combat misinformation
-- Thanks to the NLP and ML communities for their tools and resources
-
-## 📧 Contact
-
-For questions or suggestions, please open an issue on GitHub.
 
 ---
 
-**Note**: This is an educational project demonstrating NLP and machine learning applications. For production use, consider using larger, more diverse training datasets and additional validation mechanisms.
+## 🔒 Security Features
+
+**This project uses secure serialization (NO PICKLE FILES):**
+
+| Risk | Our Solution |
+|------|-------------|
+| **Pickle Code Injection** | ❌ Eliminated - Using JSON/NumPy arrays only |
+| **Data Tampering** | ✅ HMAC-SHA256 signature verification |
+| **Model Integrity** | ✅ All files are human-readable JSON |
+
+### Why Not Pickle?
+Pickle files can execute arbitrary Python code when loaded, creating a serious security vulnerability:
+```python
+# DANGER: Pickle can run malicious code
+import pickle
+pickle.loads(malicious_data)  # Executes attacker's code!
+```
+
+### Our Secure Approach:
+```python
+# SAFE: JSON cannot execute code
+import json
+model_data = json.load(open('model.json'))  # Just data, no code execution
+```
+
+---
+
+## 🧠 How It Works
+
+### 1. Text Preprocessing
+```
+Raw Text → Lowercase → Remove URLs → Remove Special Chars → Lemmatization → Clean Text
+```
+
+### 2. Feature Extraction (TF-IDF)
+- **10,000** vocabulary features
+- **N-grams**: Unigrams, Bigrams, Trigrams
+- **Sublinear TF scaling** for better term weighting
+
+### 3. Ensemble Classification
+```
+Text → SGD Classifier    ──┐
+Text → Logistic Regression─┼──→ Soft Voting → Final Prediction
+Text → Random Forest     ──┘
+```
+
+### 4. Explainability Analysis
+- **Top Features**: Which words influenced the prediction
+- **Risk Factors**: Sensational language, clickbait patterns, ALL CAPS
+- **Credibility Indicators**: Quotes, professional tone, content length
+
+---
+
+## 📊 Model Architecture
+
+| Component | Configuration |
+|-----------|---------------|
+| **Vectorizer** | TF-IDF (10,000 features, n-gram 1-3) |
+| **Classifier 1** | SGD with Modified Huber Loss |
+| **Classifier 2** | Logistic Regression |
+| **Classifier 3** | Random Forest (200 trees) |
+| **Voting** | Soft voting ensemble |
+| **Calibration** | Sigmoid probability calibration |
+
+---
+
+## 🌐 API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Web interface |
+| `/predict` | POST | Analyze text and get prediction |
+| `/analyze` | POST | Linguistic analysis only |
+| `/health` | GET | Check model status |
+
+### Example API Call
+```bash
+curl -X POST http://localhost:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Your news article here"}'
+```
+
+---
+
+## 📈 Sample Results
+
+**Fake News Detection:**
+```
+Text: "BREAKING!!! Scientists CONFIRM aliens control the government!!!"
+Prediction: FAKE (94% confidence)
+Risk Factors:
+  ⚠️ Clickbait patterns detected
+  ⚠️ Excessive exclamation marks
+  ⚠️ Multiple ALL CAPS words
+```
+
+**Real News Detection:**
+```
+Text: "The Federal Reserve announced it will maintain current interest rates."
+Prediction: REAL (85% confidence)
+Credibility Indicators:
+  ✓ Neutral language tone
+  ✓ Professional punctuation
+  ✓ Appropriate sentence complexity
+```
+
+---
+
+## 🔧 Technologies Used
+
+- **Python 3.8+**
+- **Flask** - Web framework
+- **scikit-learn** - Machine learning
+- **NLTK** - Natural language processing
+- **TF-IDF** - Feature extraction
+- **Ensemble Learning** - Model combination
+
+---
+
+## 📚 Research Background
+
+This project implements techniques from NLP research:
+
+1. **TF-IDF with Sublinear Scaling** - Better term frequency handling
+2. **Ensemble Learning** - Combining classifiers for robustness
+3. **Probability Calibration** - Reliable confidence scores
+4. **Linguistic Feature Analysis** - Stylometric fake news detection
+5. **Explainable AI** - Feature importance visualization
+
+---
+
+## 👨‍💻 Usage Examples
+
+### Python API
+```python
+from train_model import AdvancedFakeNewsDetector
+
+# Load model
+detector = AdvancedFakeNewsDetector()
+detector.load_model()
+
+# Make prediction
+result = detector.predict("Your news text here", explain=True)
+print(f"Prediction: {result.label}")
+print(f"Confidence: {result.confidence}%")
+print(f"Risk Factors: {result.risk_factors}")
+```
+
+### Command Line
+```bash
+# Train model
+python train_model.py
+
+# Start web server
+python app.py
+
+# Start desktop GUI
+python gui.py
+```
+
+---
+
+## 📝 License
+
+MIT License
+
+---
+
+## 🙏 Acknowledgments
+
+- NLTK for natural language processing tools
+- scikit-learn for machine learning algorithms
+- Flask for the web framework
+- Research papers on fake news detection and explainable AI
