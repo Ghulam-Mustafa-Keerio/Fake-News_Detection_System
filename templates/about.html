@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Fake News Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .nav-links {
+            margin-top: 15px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 1;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        p {
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #555;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .tech-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .tech-item h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        
+        .tech-item p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+        
+        .footer {
+            background: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .btn-back {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .btn-back:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>About This System</h1>
+            <p>Learn about our fake news detection technology</p>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>🎯 Project Overview</h2>
+                <p>
+                    The Fake News Detection System is an advanced machine learning application that uses 
+                    Natural Language Processing (NLP) techniques to identify potentially misleading or 
+                    fabricated news articles. In today's digital age, misinformation spreads rapidly, 
+                    and this tool aims to help users verify the authenticity of news content.
+                </p>
+            </div>
+            
+            <div class="section">
+                <h2>✨ Key Features</h2>
+                <ul class="feature-list">
+                    <li>Advanced NLP-based text analysis using TF-IDF vectorization</li>
+                    <li>Passive Aggressive Classifier for real-time predictions</li>
+                    <li>Web-based interface for easy access from any device</li>
+                    <li>Desktop GUI application built with Tkinter</li>
+                    <li>Confidence score for each prediction</li>
+                    <li>Text preprocessing including stopword removal and stemming</li>
+                    <li>Sample data loader for testing and demonstration</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>🔧 Technology Stack</h2>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <h3>Python</h3>
+                        <p>Core programming language</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>Flask</h3>
+                        <p>Web framework for API</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>Scikit-learn</h3>
+                        <p>Machine learning library</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>NLTK</h3>
+                        <p>Natural language processing</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>TF-IDF</h3>
+                        <p>Text vectorization technique</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>Tkinter</h3>
+                        <p>Desktop GUI framework</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🧠 How It Works</h2>
+                <p>
+                    <strong>1. Text Preprocessing:</strong> The system cleans and normalizes input text by 
+                    removing URLs, special characters, and stopwords, then applies stemming.
+                </p>
+                <p>
+                    <strong>2. Feature Extraction:</strong> Using TF-IDF (Term Frequency-Inverse Document 
+                    Frequency), the text is converted into numerical features that capture the importance 
+                    of words in the context of the entire corpus.
+                </p>
+                <p>
+                    <strong>3. Classification:</strong> A Passive Aggressive Classifier, trained on labeled 
+                    data, analyzes the features and predicts whether the text is fake or real news.
+                </p>
+                <p>
+                    <strong>4. Confidence Score:</strong> The system provides a confidence level for its 
+                    prediction, helping users understand the certainty of the classification.
+                </p>
+            </div>
+            
+            <div class="section">
+                <h2>⚠️ Important Notes</h2>
+                <p>
+                    This system is designed as an assistive tool and should not be the sole method for 
+                    verifying news authenticity. Always cross-reference important information with 
+                    multiple reliable sources. The model's accuracy depends on the quality and diversity 
+                    of training data.
+                </p>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="/" class="btn-back">← Back to Detection Tool</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Powered by Machine Learning & Natural Language Processing</p>
+            <p style="margin-top: 5px; font-size: 0.9em;">© 2024 Fake News Detection System</p>
+        </div>
+    </div>
+</body>
+</html>
