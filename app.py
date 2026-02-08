@@ -5,7 +5,7 @@ Flask Web Application for Fake News Detection
 from flask import Flask, render_template, request, jsonify
 import os
 import joblib
-from train_model import FakeNewsDetector
+from train_model import FakeNewsDetector, REAL_LABEL
 
 app = Flask(__name__)
 
@@ -47,7 +47,7 @@ def predict():
         
         # Make prediction
         prediction, confidence = detector.predict(text)
-        label = "REAL" if prediction == 1 else "FAKE"
+        label = "REAL" if prediction == REAL_LABEL else "FAKE"
         
         # Prepare response
         result = {

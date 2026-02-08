@@ -15,11 +15,15 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
+# Class labels for fake news detection
+FAKE_LABEL = 0
+REAL_LABEL = 1
+
 # Download required NLTK data
 try:
     nltk.download('stopwords', quiet=True)
     nltk.download('punkt', quiet=True)
-except:
+except Exception:
     pass
 
 class FakeNewsDetector:
@@ -105,7 +109,7 @@ class FakeNewsDetector:
             decision = self.model.decision_function(text_tfidf)[0]
             # Convert to confidence score (0-100%)
             confidence = min(100, max(0, 50 + abs(decision) * 10))
-        except:
+        except (AttributeError, ValueError):
             confidence = 75.0  # Default confidence
         
         return prediction, confidence
@@ -204,7 +208,7 @@ def create_sample_data():
     
     # Create dataset
     texts = fake_news + real_news
-    labels = [0] * len(fake_news) + [1] * len(real_news)  # 0=Fake, 1=Real
+    labels = [FAKE_LABEL] * len(fake_news) + [REAL_LABEL] * len(real_news)
     
     return texts, labels
 
@@ -241,7 +245,7 @@ if __name__ == "__main__":
     
     for text in test_texts:
         prediction, confidence = detector.predict(text)
-        label = "REAL" if prediction == 1 else "FAKE"
+        label = "REAL" if prediction == REAL_LABEL else "FAKE"
         print(f"\nText: {text}")
         print(f"Prediction: {label} (Confidence: {confidence:.2f}%)")
     

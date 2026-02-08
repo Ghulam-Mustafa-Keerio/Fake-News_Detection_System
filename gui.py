@@ -5,7 +5,7 @@ Tkinter GUI for Fake News Detection
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 import os
-from train_model import FakeNewsDetector
+from train_model import FakeNewsDetector, REAL_LABEL
 
 
 class FakeNewsDetectorGUI:
@@ -222,7 +222,7 @@ class FakeNewsDetectorGUI:
         try:
             # Make prediction
             prediction, confidence = self.detector.predict(text)
-            label = "REAL" if prediction == 1 else "FAKE"
+            label = "REAL" if prediction == REAL_LABEL else "FAKE"
             
             # Update result
             if label == "FAKE":
