@@ -1,6 +1,6 @@
 """
 Fake News Detection Model Training Script
-Uses TF-IDF vectorization and SGD Classifier for best results
+Uses TF-IDF vectorization and SGD Classifier (Linear SVM) for best results
 """
 
 import pandas as pd

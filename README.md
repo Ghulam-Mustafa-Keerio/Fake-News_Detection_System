@@ -4,7 +4,7 @@ An advanced machine learning application that uses Natural Language Processing (
 
 ## ✨ Features
 
-- **Advanced NLP Analysis**: Uses TF-IDF vectorization and Passive Aggressive Classifier
+- **Advanced NLP Analysis**: Uses TF-IDF vectorization and SGD Classifier (Linear SVM)
 - **Web Application**: Flask-based web interface accessible from any device
 - **Desktop GUI**: Tkinter-based graphical interface for standalone use
 - **Real-time Predictions**: Instant analysis with confidence scores
@@ -81,14 +81,14 @@ The GUI provides:
 - Generates numerical features from text
 
 ### 3. Classification
-- Passive Aggressive Classifier for real-time learning
+- SGD Classifier with hinge loss (Linear SVM) for accurate predictions
 - Trained on labeled fake/real news dataset
 - Provides binary classification with confidence scores
 
 ### 4. Model Performance
 The model uses:
 - **TF-IDF Vectorizer**: max_features=5000, ngram_range=(1,2)
-- **Passive Aggressive Classifier**: max_iter=50
+- **SGD Classifier**: Linear SVM with hinge loss, max_iter=50
 - **Train/Test Split**: 80/20 ratio
 
 ## 📁 Project Structure
