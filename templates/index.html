@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake News Detection System</title>
+    <title>Advanced Fake News Detection System</title>
     <style>
         * {
             margin: 0;
@@ -13,30 +13,44 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             padding: 20px;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
         
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
             color: white;
-            padding: 30px;
+            padding: 40px 30px;
             text-align: center;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
         }
         
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2.2em;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         
         .header p {
@@ -44,8 +58,17 @@
             opacity: 0.9;
         }
         
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+        
         .content {
-            padding: 40px;
+            padding: 50px 40px 40px;
         }
         
         .input-section {
@@ -55,72 +78,85 @@
         label {
             display: block;
             font-weight: 600;
-            margin-bottom: 10px;
-            color: #2c3e50;
+            margin-bottom: 12px;
+            color: #16213e;
             font-size: 1.1em;
         }
         
         textarea {
             width: 100%;
-            min-height: 200px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
+            min-height: 180px;
+            padding: 18px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 15px;
             font-family: inherit;
             resize: vertical;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            line-height: 1.6;
         }
         
         textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0f3460;
+            box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
         }
         
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
         
         button {
-            padding: 12px 25px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
             color: white;
             flex: 1;
-            padding: 15px;
-            font-size: 18px;
+            padding: 18px;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(15, 52, 96, 0.4);
         }
         
         .btn-secondary {
-            background: #ecf0f1;
-            color: #2c3e50;
+            background: #f1f5f9;
+            color: #16213e;
         }
         
         .btn-secondary:hover {
-            background: #bdc3c7;
+            background: #e2e8f0;
         }
         
+        /* Result Section */
         .result-section {
             margin-top: 30px;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 15px;
             display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .result-section.show {
@@ -128,39 +164,167 @@
         }
         
         .result-fake {
-            background: #ffe5e5;
-            border: 2px solid #e74c3c;
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+            border: 2px solid #fc8181;
         }
         
         .result-real {
-            background: #e5ffe5;
-            border: 2px solid #27ae60;
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+            border: 2px solid #68d391;
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .result-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .result-fake .result-icon {
+            background: #fc8181;
+            color: white;
+        }
+        
+        .result-real .result-icon {
+            background: #68d391;
+            color: white;
         }
         
         .result-title {
-            font-size: 1.5em;
+            font-size: 1.8em;
             font-weight: 700;
-            margin-bottom: 10px;
         }
         
-        .result-fake .result-title {
-            color: #c0392b;
+        .result-fake .result-title { color: #c53030; }
+        .result-real .result-title { color: #276749; }
+        
+        .confidence-bar {
+            height: 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 15px 0;
         }
         
-        .result-real .result-title {
-            color: #27ae60;
+        .confidence-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
         }
         
-        .confidence {
-            font-size: 1.2em;
+        .result-fake .confidence-fill { background: #fc8181; }
+        .result-real .confidence-fill { background: #68d391; }
+        
+        /* Explanation Section */
+        .explanation-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px dashed rgba(0,0,0,0.1);
+        }
+        
+        .explanation-title {
+            font-size: 1.1em;
             font-weight: 600;
-            margin-top: 10px;
+            color: #16213e;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
+        .explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .explanation-card {
+            background: rgba(255,255,255,0.8);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .explanation-card h4 {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+        
+        .feature-weight {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .weight-positive { background: #c6f6d5; color: #276749; }
+        .weight-negative { background: #fed7d7; color: #c53030; }
+        
+        .risk-item {
+            color: #c53030;
+            padding: 5px 0;
+        }
+        
+        .credibility-item {
+            color: #276749;
+            padding: 5px 0;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #16213e;
+        }
+        
+        .stat-label {
+            font-size: 0.8em;
+            color: #64748b;
+        }
+        
+        /* Loading */
         .loading {
             display: none;
             text-align: center;
-            margin: 20px 0;
+            padding: 40px;
         }
         
         .loading.show {
@@ -168,50 +332,53 @@
         }
         
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #0f3460;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
         }
         
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
         
         .footer {
-            background: #ecf0f1;
-            padding: 20px;
+            background: #f8fafc;
+            padding: 25px;
             text-align: center;
-            color: #7f8c8d;
+            color: #64748b;
+            font-size: 0.9em;
+        }
+        
+        .footer a {
+            color: #0f3460;
+            text-decoration: none;
+            font-weight: 600;
         }
         
         .nav-links {
-            margin-top: 15px;
+            margin-top: 10px;
         }
         
         .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            opacity: 0.9;
-            transition: opacity 0.3s;
+            margin: 0 12px;
         }
         
-        .nav-links a:hover {
-            opacity: 1;
-        }
-        
+        /* Responsive */
         @media (max-width: 600px) {
-            .header h1 {
-                font-size: 1.8em;
+            .content {
+                padding: 40px 20px 30px;
             }
             
-            .content {
-                padding: 20px;
+            .header h1 {
+                font-size: 1.6em;
+            }
+            
+            .explanation-grid {
+                grid-template-columns: 1fr;
             }
             
             .button-group {
@@ -222,127 +389,253 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header class="header">
             <h1>🔍 Fake News Detection</h1>
-            <p>Advanced NLP-powered news verification system</p>
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/about">About</a>
-            </div>
-        </div>
+            <p>Advanced AI-Powered News Verification with Explainability</p>
+            <span class="badge">Ensemble ML + NLP Analysis</span>
+        </header>
         
-        <div class="content">
+        <main class="content">
             <div class="input-section">
-                <label for="newsText">Enter news text to analyze:</label>
-                <textarea id="newsText" placeholder="Paste your news article or headline here..."></textarea>
+                <label for="newsText">Paste news article or text to analyze:</label>
+                <textarea 
+                    id="newsText" 
+                    placeholder="Enter or paste the news article text here. The more text you provide, the more accurate the analysis will be.
+
+For best results, include:
+• The headline or title
+• The main article content
+• Any claims or statements made"
+                ></textarea>
             </div>
             
             <div class="button-group">
-                <button class="btn-secondary" onclick="loadFakeSample()">Load Fake Sample</button>
-                <button class="btn-secondary" onclick="loadRealSample()">Load Real Sample</button>
-                <button class="btn-secondary" onclick="clearText()">Clear</button>
+                <button class="btn-secondary" onclick="loadSample('fake')">📰 Sample Fake News</button>
+                <button class="btn-secondary" onclick="loadSample('real')">✓ Sample Real News</button>
+                <button class="btn-secondary" onclick="clearText()">🗑️ Clear</button>
             </div>
             
-            <button class="btn-primary" onclick="analyzeNews()">🔍 Analyze News</button>
+            <button class="btn-primary" onclick="analyzeNews()">
+                <span>🔬</span>
+                <span>Analyze News</span>
+            </button>
             
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p style="margin-top: 10px;">Analyzing...</p>
+                <p>Analyzing text with AI...</p>
             </div>
             
             <div class="result-section" id="result">
-                <div class="result-title" id="resultTitle"></div>
-                <div class="confidence" id="confidence"></div>
-                <p style="margin-top: 15px;" id="resultText"></p>
+                <div class="result-header">
+                    <div class="result-icon" id="resultIcon">!</div>
+                    <div>
+                        <div class="result-title" id="resultTitle">ANALYZING...</div>
+                        <div id="confidenceText">Confidence: ---%</div>
+                    </div>
+                </div>
+                
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                </div>
+                
+                <div class="explanation-section" id="explanationSection">
+                    <div class="explanation-title">
+                        <span>💡</span>
+                        <span>Why this prediction?</span>
+                    </div>
+                    
+                    <div class="explanation-grid">
+                        <div class="explanation-card" id="featuresCard">
+                            <h4>📊 Key Features Detected</h4>
+                            <ul class="feature-list" id="featuresList"></ul>
+                        </div>
+                        
+                        <div class="explanation-card" id="statsCard">
+                            <h4>📈 Linguistic Analysis</h4>
+                            <div class="stat-grid" id="statsGrid"></div>
+                        </div>
+                        
+                        <div class="explanation-card" id="risksCard">
+                            <h4>⚠️ Risk Factors</h4>
+                            <ul class="feature-list" id="risksList"></ul>
+                        </div>
+                        
+                        <div class="explanation-card" id="credibilityCard">
+                            <h4>✅ Credibility Indicators</h4>
+                            <ul class="feature-list" id="credibilityList"></ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </main>
         
-        <div class="footer">
-            <p>Powered by Machine Learning & Natural Language Processing</p>
-            <p style="margin-top: 5px; font-size: 0.9em;">© 2024 Fake News Detection System</p>
-        </div>
+        <footer class="footer">
+            <p>Powered by Machine Learning, NLP & Explainable AI</p>
+            <div class="nav-links">
+                <a href="/about">About</a>
+                <a href="/api/models">API</a>
+                <a href="/health">Status</a>
+            </div>
+        </footer>
     </div>
     
     <script>
-        function loadFakeSample() {
-            document.getElementById('newsText').value = 
-                "Breaking News: Scientists have discovered that aliens are living among us and " +
-                "controlling the world government. Anonymous sources confirm that the moon landing " +
-                "was faked and the earth is actually flat. This shocking revelation will change " +
-                "everything we know!";
-        }
+        const samples = {
+            fake: `BREAKING NEWS!!! Scientists have CONFIRMED that 5G towers are being used to control people's minds! Anonymous government insiders have leaked TOP SECRET documents proving this SHOCKING conspiracy! 
+
+Multiple sources confirm that the COVID vaccine contains MICROCHIPS that can be activated by 5G signals. Doctors are being SILENCED and this post will be DELETED soon!
+
+SHARE this before it's too late! They don't want you to know the TRUTH! Click here to learn the one weird trick they're hiding from you!!!`,
+            
+            real: `The Federal Reserve announced Wednesday that it will maintain its current interest rate target, citing ongoing concerns about inflation while acknowledging recent improvements in labor market conditions.
+
+Fed Chair Jerome Powell stated during the post-meeting press conference that the central bank remains committed to its 2% inflation target and will continue to monitor economic data before making any policy adjustments.
+
+Economists largely expected the decision, with most predicting that rate cuts may begin in the second half of the year if inflation continues to moderate. The unemployment rate remained steady at 3.7% according to the latest Bureau of Labor Statistics report.`
+        };
         
-        function loadRealSample() {
-            document.getElementById('newsText').value = 
-                "Local community celebrates the opening of a new public library. The facility, " +
-                "which cost $2 million to build, will serve residents with access to books, " +
-                "computers, and educational programs. City officials and community members " +
-                "attended the ribbon-cutting ceremony yesterday afternoon.";
+        function loadSample(type) {
+            document.getElementById('newsText').value = samples[type];
         }
         
         function clearText() {
             document.getElementById('newsText').value = '';
-            document.getElementById('result').classList.remove('show');
+            document.getElementById('result').classList.remove('show', 'result-fake', 'result-real');
         }
         
         async function analyzeNews() {
             const text = document.getElementById('newsText').value.trim();
             
             if (!text) {
-                alert('Please enter some text to analyze.');
+                alert('Please enter some text to analyze');
                 return;
             }
             
-            // Show loading
-            document.getElementById('loading').classList.add('show');
-            document.getElementById('result').classList.remove('show');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            
+            loading.classList.add('show');
+            result.classList.remove('show');
             
             try {
                 const response = await fetch('/predict', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ text: text })
+                    body: JSON.stringify({ 
+                        text: text,
+                        explain: true 
+                    })
                 });
                 
                 const data = await response.json();
+                loading.classList.remove('show');
                 
-                if (response.ok) {
-                    displayResult(data);
-                } else {
-                    alert('Error: ' + (data.error || 'An error occurred'));
+                if (data.error) {
+                    alert(data.error);
+                    return;
                 }
+                
+                displayResult(data);
+                
             } catch (error) {
-                alert('Error: ' + error.message);
-            } finally {
-                document.getElementById('loading').classList.remove('show');
+                loading.classList.remove('show');
+                alert('Error analyzing text: ' + error.message);
             }
         }
         
         function displayResult(data) {
-            const resultDiv = document.getElementById('result');
-            const resultTitle = document.getElementById('resultTitle');
-            const confidence = document.getElementById('confidence');
-            const resultText = document.getElementById('resultText');
+            const result = document.getElementById('result');
+            const isFake = data.prediction === 'FAKE';
             
-            // Remove previous classes
-            resultDiv.classList.remove('result-fake', 'result-real');
+            // Update classes
+            result.classList.remove('result-fake', 'result-real');
+            result.classList.add(isFake ? 'result-fake' : 'result-real');
+            result.classList.add('show');
             
-            // Add appropriate class and content
-            if (data.prediction === 'FAKE') {
-                resultDiv.classList.add('result-fake');
-                resultTitle.textContent = '⚠️ FAKE NEWS DETECTED!';
-                resultText.textContent = 'This text shows characteristics of fake news. Please verify from reliable sources.';
+            // Update main result
+            document.getElementById('resultIcon').textContent = isFake ? '⚠️' : '✓';
+            document.getElementById('resultTitle').textContent = isFake ? 'LIKELY FAKE NEWS' : 'LIKELY REAL NEWS';
+            document.getElementById('confidenceText').textContent = `Confidence: ${data.confidence}%`;
+            document.getElementById('confidenceFill').style.width = `${data.confidence}%`;
+            
+            // Update explanation if available
+            const explanationSection = document.getElementById('explanationSection');
+            
+            if (data.explanation) {
+                explanationSection.style.display = 'block';
+                
+                // Features
+                const featuresList = document.getElementById('featuresList');
+                featuresList.innerHTML = '';
+                if (data.explanation.top_features && data.explanation.top_features.length > 0) {
+                    data.explanation.top_features.forEach(f => {
+                        const weightClass = f.weight > 0 ? 'weight-positive' : 'weight-negative';
+                        featuresList.innerHTML += `
+                            <li>
+                                <span class="feature-weight ${weightClass}">${f.weight.toFixed(3)}</span>
+                                <span>${f.word}</span>
+                            </li>`;
+                    });
+                } else {
+                    featuresList.innerHTML = '<li>No significant features detected</li>';
+                }
+                
+                // Stats
+                const statsGrid = document.getElementById('statsGrid');
+                const stats = data.explanation.linguistic_analysis || {};
+                statsGrid.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.word_count || 0}</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.sentence_count || 0}</div>
+                        <div class="stat-label">Sentences</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.sensational_words || 0}</div>
+                        <div class="stat-label">Sensational</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.caps_ratio || 0}%</div>
+                        <div class="stat-label">CAPS Ratio</div>
+                    </div>
+                `;
+                
+                // Risks
+                const risksList = document.getElementById('risksList');
+                risksList.innerHTML = '';
+                if (data.explanation.risk_factors && data.explanation.risk_factors.length > 0) {
+                    data.explanation.risk_factors.forEach(r => {
+                        risksList.innerHTML += `<li class="risk-item">⚠️ ${r}</li>`;
+                    });
+                } else {
+                    risksList.innerHTML = '<li style="color: #276749">✓ No major risk factors detected</li>';
+                }
+                
+                // Credibility
+                const credibilityList = document.getElementById('credibilityList');
+                credibilityList.innerHTML = '';
+                if (data.explanation.credibility_indicators && data.explanation.credibility_indicators.length > 0) {
+                    data.explanation.credibility_indicators.forEach(c => {
+                        credibilityList.innerHTML += `<li class="credibility-item">✓ ${c}</li>`;
+                    });
+                } else {
+                    credibilityList.innerHTML = '<li style="color: #64748b">No specific credibility indicators</li>';
+                }
             } else {
-                resultDiv.classList.add('result-real');
-                resultTitle.textContent = '✓ REAL NEWS';
-                resultText.textContent = 'This text appears to be legitimate news. However, always verify important information.';
+                explanationSection.style.display = 'none';
             }
-            
-            confidence.textContent = `Confidence: ${data.confidence}%`;
-            resultDiv.classList.add('show');
         }
+        
+        // Allow Enter key in textarea to not submit
+        document.getElementById('newsText').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                analyzeNews();
+            }
+        });
     </script>
 </body>
 </html>
