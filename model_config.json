@@ -1,6 +1,6 @@
 {
   "model_type": "tfidf_ensemble",
-  "vocabulary_size": 24,
+  "vocabulary_size": 10000,
   "security": "json_only_no_pickle",
   "version": "2.0"
 }

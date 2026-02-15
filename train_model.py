@@ -23,6 +23,8 @@ from typing import Tuple, List, Dict, Optional, Union
 from dataclasses import dataclass
 from enum import Enum
 
+from dataset_utils import load_kaggle_dataset
+
 # Core ML imports
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -709,7 +711,13 @@ class AdvancedFakeNewsDetector:
         # Manually set vocabulary and IDF
         self.vectorizer.vocabulary_ = {k: int(v) for k, v in vectorizer_data['vocabulary'].items()}
         self.vectorizer.idf_ = np.array(vectorizer_data['idf'])
-        self.vectorizer._tfidf._idf_diag = np.diag(self.vectorizer.idf_).astype(np.float64)
+        # Use sparse diagonal matrix (matches sklearn internals, avoids 800MB dense allocation)
+        from scipy.sparse import diags as _sparse_diags
+        self.vectorizer._tfidf._idf_diag = _sparse_diags(
+            self.vectorizer.idf_, offsets=0,
+            shape=(len(self.vectorizer.idf_), len(self.vectorizer.idf_)),
+            format='csr', dtype=np.float64
+        )
         self.feature_names = np.array(sorted(self.vectorizer.vocabulary_.keys(), 
                                               key=lambda x: self.vectorizer.vocabulary_[x]))
         
@@ -776,19 +784,11 @@ class AdvancedFakeNewsDetector:
             return est
         
         elif est_data.get('estimator_type') == 'random_forest':
-            # For Random Forest, we create a simple fallback
-            # Note: Full RF reconstruction would require saving all tree structures
-            # This is a limitation acknowledged for security tradeoff
-            print("  Note: Random Forest loaded in limited mode (security tradeoff)")
-            est = LogisticRegression(max_iter=1000)
-            # Use average feature importance as pseudo-coefficients
-            n_features = len(est_data.get('feature_importances', []))
-            if n_features > 0:
-                importance = np.array(est_data['feature_importances'])
-                est.coef_ = importance.reshape(1, -1)
-                est.intercept_ = np.array([0.0])
-                est.classes_ = np.array(est_data.get('classes', [0, 1]))
-            return est
+            # Random Forest cannot be faithfully reconstructed from JSON
+            # (would require serialising full tree structures).
+            # Skip it so the remaining linear estimators carry the vote.
+            print("  Note: Random Forest skipped during load (security tradeoff)")
+            return None
         
         return None
 
@@ -933,10 +933,16 @@ def main():
     print("   Using Modern NLP Techniques & Explainable AI")
     print("=" * 70)
     
-    # Create extended sample data
-    print("\n[1/4] Creating extended training dataset...")
-    texts, labels = create_extended_sample_data()
-    print(f"      Dataset created with {len(texts)} samples")
+    # Load Kaggle dataset (44,898 real articles) or fall back to sample data
+    kaggle_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "fake_and_real_news")
+    if os.path.isdir(kaggle_path) and os.path.exists(os.path.join(kaggle_path, "Fake.csv")):
+        print("\n[1/4] Loading Kaggle Fake and Real News Dataset...")
+        texts, labels = load_kaggle_dataset(kaggle_path)
+    else:
+        print("\n[1/4] Kaggle dataset not found — using extended sample data...")
+        print(f"      (To use the full dataset, place Fake.csv & True.csv in {kaggle_path})")
+        texts, labels = create_extended_sample_data()
+    print(f"      Dataset size: {len(texts)} samples")
     print(f"      - Fake news samples: {labels.count(FAKE_LABEL)}")
     print(f"      - Real news samples: {labels.count(REAL_LABEL)}")
     

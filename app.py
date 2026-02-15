@@ -2,7 +2,7 @@
 Advanced Flask Web Application for Fake News Detection
 Features:
 - Explainable AI predictions
-- Multiple model support (Ensemble, SGD, Logistic, Transformer)
+- Ensemble model support (SGD, Logistic Regression, Random Forest)
 - Confidence calibration
 - Linguistic analysis
 - Risk factor detection
@@ -22,12 +22,6 @@ from train_model import (
     FAKE_LABEL
 )
 ADVANCED_MODEL_AVAILABLE = True
-
-# Try to import transformer model
-try:
-    from train_model_transformer import TransformerFakeNewsDetector, TRANSFORMERS_AVAILABLE
-except ImportError:
-    TRANSFORMERS_AVAILABLE = False
 
 app = Flask(__name__)
 
@@ -288,8 +282,7 @@ def health():
         'model_loaded': model_info.get('loaded', False),
         'model_type': model_info.get('type', 'none'),
         'features': model_info.get('features', []),
-        'advanced_available': ADVANCED_MODEL_AVAILABLE,
-        'transformers_available': TRANSFORMERS_AVAILABLE
+        'advanced_available': ADVANCED_MODEL_AVAILABLE
     })
 
 
@@ -315,15 +308,6 @@ def list_models():
             'status': 'available',
             'features': ['explainability', 'calibration', 'linguistic_analysis'],
             'security': 'json_only_no_pickle'
-        })
-    
-    # Check transformer model
-    if os.path.exists('transformer_model'):
-        models.append({
-            'name': 'Transformer (Fine-tuned)',
-            'file': 'transformer_model/',
-            'status': 'available',
-            'features': ['state-of-the-art', 'contextual_embeddings']
         })
     
     return jsonify({

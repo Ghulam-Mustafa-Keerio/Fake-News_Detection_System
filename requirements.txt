@@ -12,13 +12,6 @@ pandas>=2.0.3
 nltk>=3.8.1
 
 # ============================================
-# Optional: For Transformer-based Models
-# Uncomment the following for best accuracy
-# ============================================
-# transformers>=4.35.0
-# torch>=2.0.0
-
-# ============================================
 # Optional: For enhanced visualizations
 # ============================================
 # matplotlib>=3.7.0

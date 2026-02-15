@@ -194,19 +194,45 @@ def load_kaggle_dataset(path: str = "data/fake_and_real_news/") -> Tuple[List[st
     """
     fake_path = os.path.join(path, "Fake.csv")
     true_path = os.path.join(path, "True.csv")
-    
-    if not os.path.exists(fake_path) or not os.path.exists(true_path):
-        raise FileNotFoundError(
-            f"Dataset not found at {path}.\n"
-            "Please download from: https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset\n"
-            "And extract Fake.csv and True.csv to the specified directory."
-        )
+
+    # If files are not found in the provided path, try common alternatives
+    if not (os.path.exists(fake_path) and os.path.exists(true_path)):
+        alt_fake = os.path.join(os.getcwd(), "Fake.csv")
+        alt_true = os.path.join(os.getcwd(), "True.csv")
+        if os.path.exists(alt_fake) and os.path.exists(alt_true):
+            fake_path, true_path = alt_fake, alt_true
+        else:
+            raise FileNotFoundError(
+                f"Dataset not found at {path}.\n"
+                "Please download from: https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset\n"
+                "And extract Fake.csv and True.csv to the specified directory (or run the provided download script)."
+            )
     
     print("Loading Kaggle Fake and Real News Dataset...")
     
     # Load datasets
     fake_df = pd.read_csv(fake_path)
     true_df = pd.read_csv(true_path)
+    
+    # Strip Reuters/AP source-attribution patterns from True.csv texts
+    # (e.g. "WASHINGTON (Reuters) - ...", "(Reuters) - ...", city names with
+    # commas/abbreviations, correction notes, etc.) so the model learns
+    # content features, not source-line shortcuts.
+    true_df['text'] = true_df['text'].str.replace(
+        r'^.*?\(Reuters\)\s*-\s*', '', regex=True
+    )
+    true_df['text'] = true_df['text'].str.replace(
+        r'^.*?\(AP\)\s*-\s*', '', regex=True
+    )
+    # Strip correction/editor notes at start
+    true_df['text'] = true_df['text'].str.replace(
+        r'^\s*\(In .+? story,.*?\)\s*', '', regex=True
+    )
+    # Strip "The following statements were posted to the verified Twitter accounts of..."
+    true_df['text'] = true_df['text'].str.replace(
+        r'^The following statements were posted to the verified Twitter accounts? of U\.S\. President Donald Trump.*?$',
+        '', regex=True, flags=0
+    )
     
     # Combine title and text
     fake_df['content'] = fake_df['title'] + " " + fake_df['text']
