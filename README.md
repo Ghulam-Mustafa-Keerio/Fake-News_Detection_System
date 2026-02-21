@@ -5,17 +5,46 @@ An advanced machine learning application that uses Natural Language Processing (
 ## ✨ Features
 
 - **Advanced NLP Analysis**: Uses TF-IDF vectorization and SGD Classifier (Linear SVM)
-- **Web Application**: Flask-based web interface accessible from any device
-- **Desktop GUI**: Tkinter-based graphical interface for standalone use
-- **Real-time Predictions**: Instant analysis with confidence scores
-- **Sample Data**: Pre-loaded examples for testing
-- **Text Preprocessing**: Comprehensive cleaning including stopword removal and stemming
+- **Model Explainability**: Highlights the top contributing keywords and linguistic patterns that influence the "Fake" or "Real" verdict.
+- **Interactive Dashboard**: Modern web interface with confidence visualization and real-time progress bars.
+- **Fact-Checking Integration**: Direct links to **Google News** and **Snopes** for cross-referencing news headlines instantly.
+- **Scan History**: Persistent tracking of your recent news analyses within the browser (using local storage) or within the GUI application.
+- **Improved Confidence Scoring**: Uses a sigmoid-based probability mapping for more accurate certainty levels.
+- **Secure Model Serialization**: Custom JSON-based serialization for the model and vectorizer to prevent security risks associated with legacy formats.
+- **Dual Interface**: Fully functional **Flask-based Web App** and a **Tkinter-based Desktop GUI** with dashboard layouts.
+
+## 🏗️ Model Architecture & Workflow
+
+```mermaid
+graph TD
+    A[Input News Article] --> B[Text Preprocessing]
+    B --> C[TF-IDF Vectorization]
+    C --> D[SGD Classifier / Linear SVM]
+    D --> E{Prediction}
+    E -->|0| F[FAKE News]
+    E -->|1| G[REAL News]
+    
+    subgraph "Preprocessing Steps"
+    B1[Lowercase Conversion]
+    B2[Remove URLs & Mentions]
+    B3[Remove Special Characters]
+    B4[Eliminate Stopwords]
+    B5[Porter Stemming]
+    B --> B1 --> B2 --> B3 --> B4 --> B5
+    end
+    
+    subgraph "Security Layer"
+    S1[Secure JSON Serialization]
+    D -.-> S1
+    C -.-> S1
+    end
+```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.7 or higher
+- Python 3.8+
 - pip (Python package installer)
 
 ### Installation
@@ -26,7 +55,7 @@ git clone https://github.com/Ghulam-Mustafa-Keerio/Fake-News_Detection_System.gi
 cd Fake-News_Detection_System
 ```
 
-2. Install required packages:
+2. Install required dependencies:
 ```bash
 pip install -r requirements.txt
 ```
@@ -36,7 +65,7 @@ pip install -r requirements.txt
 python train_model.py
 ```
 
-This will create `model.pkl` and `vectorizer.pkl` files needed for predictions.
+This will generate `model.json` and `vectorizer.json` files using a **Secure Serialization Format**.
 
 ## 💻 Usage
 
@@ -47,64 +76,70 @@ This will create `model.pkl` and `vectorizer.pkl` files needed for predictions.
 python app.py
 ```
 
-2. Open your browser and navigate to:
-```
-http://localhost:5000
-```
-
-3. Enter news text and click "Analyze News" to get predictions.
+2. Open your browser and navigate to `http://localhost:5000`
 
 ### Desktop GUI (Tkinter)
 
-Run the Tkinter interface:
+Run the standalone desktop application:
 ```bash
 python gui.py
 ```
 
-The GUI provides:
-- Text input area for news articles
-- Sample data buttons for testing
-- Real-time analysis with visual feedback
-- Confidence scores for predictions
-
 ## 🧠 How It Works
 
-### 1. Text Preprocessing
-- Converts text to lowercase
-- Removes URLs, mentions, and special characters
-- Eliminates stopwords
-- Applies stemming for normalization
+### 1. Data Processing
+The system handles large datasets including `fake.csv` and `true.csv`, though for demonstration purposes, `train_model.py` includes a sample data generator.
 
-### 2. Feature Extraction
-- Uses TF-IDF (Term Frequency-Inverse Document Frequency)
-- Captures word importance in context
-- Generates numerical features from text
+### 2. Text Preprocessing
+- **Cleaning**: Removes noise such as HTML tags, URLs, and special characters.
+- **Tokenization & Normalization**: Splits text into words and applies lowercase conversion.
+- **Stemming**: Reduces words to their base form (e.g., "running" becomes "run").
 
-### 3. Classification
-- SGD Classifier with hinge loss (Linear SVM) for accurate predictions
-- Trained on labeled fake/real news dataset
-- Provides binary classification with confidence scores
+### 3. Feature Extraction
+- **TF-IDF (Term Frequency-Inverse Document Frequency)**: A statistical measure used to evaluate how important a word is to a document in a collection.
+- **N-Grams**: Uses both unigrams and bigrams (1, 2) for better contextual understanding.
 
-### 4. Model Performance
-The model uses:
-- **TF-IDF Vectorizer**: max_features=5000, ngram_range=(1,2)
-- **SGD Classifier**: Linear SVM with hinge loss, max_iter=50
-- **Train/Test Split**: 80/20 ratio
+### 4. Classification Engine
+- **SGD Classifier**: Implements a Linear SVM with hinge loss, optimized for sparse text data.
+- **Explainability Layer**: The model now identifies and extracts the top 5 words that contributed most to a "Fake" or "Real" verdict.
+- **Robust Confidence Scoring**: Implements a sigmoid-based probability mapping ($1 / (1 + e^{-k \cdot distance})$) for more realistic certainty levels.
+- **Secure Storage**: Models are saved as human-readable JSON files, eliminating the `pickle` security vulnerabilities.
 
-## 📁 Project Structure
+## 📊 Model Performance & Evaluation
+
+The following results were obtained from the current model training session:
+
+### 📊 Training Highlights
+- **Model Accuracy**: **71.43%**
+- **Samples**: 70 total (35 Fake, 35 Real)
+- **Train/Test Split**: 80/20 ratio (14 samples for evaluation)
+
+### 📋 Classification Report
+| Class | Precision | Recall | F1-Score | Support |
+| :--- | :--- | :--- | :--- | :--- |
+| **Fake** | 0.88 | 0.70 | 0.78 | 10 |
+| **Real** | 0.50 | 0.75 | 0.60 | 4 |
+| **Overall Accuracy** | | | **0.71** | **14** |
+
+### 🔍 Live Predictions Analysis
+| News Text Sample | Prediction | Confidence | Contributing Keywords |
+| :--- | :--- | :--- | :--- |
+| "Scientists make breakthrough in cancer research at local university" | **REAL** | 93.63% | local, scientists, research |
+| "Aliens control the government and hide among us confirmed" | **FAKE** | 98.46% | control, government |
+| "Local community celebrates new park opening with festival" | **REAL** | 99.96% | local, new, community |
+
+## �📁 Project Structure
 
 ```
 Fake-News_Detection_System/
-├── train_model.py          # Model training script
-├── app.py                  # Flask web application
-├── gui.py                  # Tkinter desktop GUI
-├── requirements.txt        # Python dependencies
-├── .gitignore             # Git ignore rules
-├── templates/             # HTML templates
-│   ├── index.html        # Main web interface
-│   └── about.html        # About page
-├── model.pkl             # Trained model (generated)
-└── vectorizer.pkl        # TF-IDF vectorizer (generated)
+├── train_model.py          # Model training & secure serialization
+├── app.py                  # Flask web server
+├── gui.py                  # Tkinter UI application
+├── requirements.txt        # Package dependencies
+├── fake.csv & true.csv     # Training datasets
+├── templates/             # HTML for web interface
+├── model.json             # Securely saved model weights
+└── vectorizer.json        # Securely saved TF-IDF vocabulary 
 ```
 
 ## 🛠️ Technologies Used
@@ -115,7 +150,7 @@ Fake-News_Detection_System/
 - **NLTK**: Natural language processing toolkit
 - **Pandas & NumPy**: Data manipulation
 - **Tkinter**: Desktop GUI framework
-- **Joblib**: Model serialization
+- **JSON**: Secure model serialization (replaced Pickle/Joblib)
 
 ## 📊 Sample Usage
 
@@ -130,15 +165,17 @@ detector.load_model()
 
 # Make prediction
 text = "Your news article text here..."
-prediction, confidence = detector.predict(text)
+prediction, confidence, keywords = detector.predict(text)
 
-if prediction == 1:
-    print(f"REAL NEWS (Confidence: {confidence:.2f}%)")
-else:
-    print(f"FAKE NEWS (Confidence: {confidence:.2f}%)")
+label = "REAL" if prediction == 1 else "FAKE"
+print(f"Result: {label} (Confidence: {confidence:.2f}%)")
+
+# View keyword impact
+for kw in keywords:
+    print(f"- {kw['word']}: {kw['impact']} (Impact Score: {kw['score']})")
 ```
 
-## ⚠️ Important Notes
+## 🔐 Security Benefits
 
 - This system is an assistive tool, not a definitive fact-checker
 - Always verify important news from multiple reliable sources
