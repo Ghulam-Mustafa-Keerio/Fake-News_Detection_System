@@ -4,8 +4,8 @@ Flask Web Application for Fake News Detection
 
 from flask import Flask, render_template, request, jsonify
 import os
-import joblib
-from train_model import FakeNewsDetector, REAL_LABEL
+import warnings
+from train_model import FakeNewsDetector, REAL_LABEL, load_model_safely
 
 app = Flask(__name__)
 
@@ -14,9 +14,9 @@ detector = FakeNewsDetector()
 
 # Load pre-trained model if available
 try:
-    if os.path.exists('model.pkl') and os.path.exists('vectorizer.pkl'):
+    if os.path.exists('model.json') and os.path.exists('vectorizer.json'):
         detector.load_model()
-        print("Pre-trained model loaded successfully!")
+        print("Pre-trained model loaded successfully from JSON!")
     else:
         print("No pre-trained model found. Please run train_model.py first.")
 except Exception as e:
@@ -46,14 +46,15 @@ def predict():
             }), 400
         
         # Make prediction
-        prediction, confidence = detector.predict(text)
+        prediction, confidence, keywords = detector.predict(text)
         label = "REAL" if prediction == REAL_LABEL else "FAKE"
         
         # Prepare response
         result = {
             'prediction': label,
             'confidence': round(confidence, 2),
-            'text': text[:200] + '...' if len(text) > 200 else text
+            'text': text[:200] + '...' if len(text) > 200 else text,
+            'keywords': keywords # Explainability data
         }
         
         return jsonify(result)
@@ -73,7 +74,7 @@ def about():
 @app.route('/health')
 def health():
     """Health check endpoint"""
-    model_loaded = os.path.exists('model.pkl') and os.path.exists('vectorizer.pkl')
+    model_loaded = os.path.exists('model.json') and os.path.exists('vectorizer.json')
     return jsonify({
         'status': 'healthy',
         'model_loaded': model_loaded
