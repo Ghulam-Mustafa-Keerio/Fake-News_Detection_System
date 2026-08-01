@@ -5,7 +5,7 @@ Tkinter GUI for Fake News Detection
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 import os
-from train_model import FakeNewsDetector, REAL_LABEL
+from train_model import AdvancedFakeNewsDetector as FakeNewsDetector, REAL_LABEL
 
 
 class FakeNewsDetectorGUI:

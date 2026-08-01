@@ -1,0 +1,12 @@
+{
+  "accuracy": 0.988641425389755,
+  "precision": 0.988689119629674,
+  "recall": 0.988641425389755,
+  "f1_score": 0.9886436179931752,
+  "roc_auc": 0.9993174654870467,
+  "training_samples": 35918,
+  "test_samples": 8980,
+  "vocabulary_size": 10000,
+  "model_type": "tfidf_ensemble",
+  "timestamp": "2026-02-14T09:42:59.057011"
+}
